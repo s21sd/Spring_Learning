@@ -1,31 +1,33 @@
 package com.example.crud;
 
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-// Controller are the file in which we define all of the rest apis
+// Controller where we define all of the REST APIs
 @RestController
+@RequestMapping("/employees") // Base path for all employee-related endpoints
 public class EmpRestController {
+    @Autowired
+    private EmployeeService employeeService;
 
-    List<Employee> employees = new ArrayList<>();
-
-    @GetMapping("employees")
+    @GetMapping
     public List<Employee> getAllEmployees() {
-        return employees;
+        return employeeService.readEmplyees();
     }
 
-    @PostMapping("employees")
-    public String postMethodName(@RequestBody Employee employee) {
-
-        employees.add(employee);
-        return "Saved Successfully";
+    @PostMapping
+    public String createEmployee(@RequestBody Employee employee) {
+        return employeeService.creatEmployee(employee);
     }
 
+    @DeleteMapping("/{id}")
+    public String deleteEmployee(@PathVariable String id) {
+        if (employeeService.deleteEmployee(id)) {
+            return "Deleted Successfully";
+        } else {
+            return "Error in Deleting the Employee";
+        }
+    }
 }
